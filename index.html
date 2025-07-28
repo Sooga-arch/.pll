@@ -143,6 +143,10 @@
   <div id="footerText">created by sooga</div>
 
   <script>
+    // ** NA POCZĄTKU wymusz ukrycie mapy - reset **
+    const mapOverlay = document.getElementById('mapOverlay');
+    mapOverlay.style.display = 'none';
+
     // Tworzenie gwiazdek
     const starsContainer = document.getElementById('stars');
     const starCount = 100;
@@ -161,7 +165,6 @@
     }
 
     const openMapBtn = document.getElementById('openMapBtn');
-    const mapOverlay = document.getElementById('mapOverlay');
     const closeButton = document.getElementById('closeButton');
 
     openMapBtn.addEventListener('click', () => {
@@ -182,4 +185,3 @@
 
 </body>
 </html>
-
