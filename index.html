@@ -37,19 +37,12 @@
     100% {opacity: 1;}
   }
 
-  /* Animacja pojawiania i znikania napisu */
-  @keyframes fadeInOut {
-    0%, 20%, 100% { opacity: 1; }
-    50%, 70% { opacity: 0; }
-  }
-
   h1 {
     margin-top: 100px;
     font-size: 4rem;
     text-shadow: 0 0 15px white;
     position: relative;
     z-index: 10;
-    animation: fadeInOut 5s infinite ease-in-out;
   }
 
   .buttons {
@@ -58,6 +51,8 @@
     justify-content: center;
     position: relative;
     z-index: 10;
+    flex-direction: column;
+    align-items: center;
   }
   button {
     padding: 12px 30px;
@@ -72,6 +67,23 @@
   button:hover {
     background: #444;
     color: white;
+  }
+
+  /* Kontener liczb pod przyciskiem */
+  #numberList {
+    margin-top: 15px;
+    color: white;
+    font-size: 1.1rem;
+    user-select: none;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  #numberList span {
+    min-width: 25px;
   }
 
   /* Mapa - overlay */
@@ -141,6 +153,7 @@
 
   <div class="buttons">
     <button id="openMapBtn">MAPA</button>
+    <div id="numberList"></div>
   </div>
 
   <div id="mapOverlay">
@@ -172,6 +185,14 @@
       starsContainer.appendChild(star);
     }
 
+    // Wstawienie liczb 1-30 pod przyciskiem
+    const numberList = document.getElementById('numberList');
+    for(let i=1; i<=30; i++) {
+      const span = document.createElement('span');
+      span.textContent = i + '-';
+      numberList.appendChild(span);
+    }
+
     const openMapBtn = document.getElementById('openMapBtn');
     const closeButton = document.getElementById('closeButton');
 
@@ -193,4 +214,3 @@
 
 </body>
 </html>
-
