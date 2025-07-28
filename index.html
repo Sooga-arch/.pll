@@ -1,129 +1,137 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FiveLife - Strona z mapą</title>
-  <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%;
-      background: black;
-      font-family: Arial, sans-serif;
-      color: white;
-      text-align: center;
-      overflow: hidden;
-      position: relative;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FiveLife - Strona z mapą</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: black;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+  }
 
-    /* Gwiazdy */
-    #stars {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-      background: transparent;
-    }
-    .star {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      opacity: 0.8;
-      animation: twinkle 3s infinite alternate;
-    }
-    @keyframes twinkle {
-      0% {opacity: 0.3;}
-      100% {opacity: 1;}
-    }
+  /* Gwiazdy */
+  #stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    background: transparent;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 3s infinite alternate;
+  }
+  @keyframes twinkle {
+    0% {opacity: 0.3;}
+    100% {opacity: 1;}
+  }
 
-    h1 {
-      margin-top: 100px;
-      font-size: 4rem;
-      text-shadow: 0 0 15px white;
-      position: relative;
-      z-index: 10;
-    }
-    .buttons {
-      margin: 30px 0;
-      display: flex;
-      justify-content: center;
-      position: relative;
-      z-index: 10;
-    }
-    button {
-      padding: 12px 30px;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: white;
-      color: black;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #444;
-      color: white;
-    }
+  /* Animacja pojawiania i znikania napisu */
+  @keyframes fadeInOut {
+    0%, 20%, 100% { opacity: 1; }
+    50%, 70% { opacity: 0; }
+  }
 
-    /* Mapa - overlay */
-    #mapOverlay {
-      display: none; /* ukryta na start */
-      position: fixed;
-      top:0; left:0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.95);
-      z-index: 1000;
+  h1 {
+    margin-top: 100px;
+    font-size: 4rem;
+    text-shadow: 0 0 15px white;
+    position: relative;
+    z-index: 10;
+    animation: fadeInOut 5s infinite ease-in-out;
+  }
 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      flex-direction: column;
-    }
+  .buttons {
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+  }
+  button {
+    padding: 12px 30px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: white;
+    color: black;
+    transition: 0.3s;
+  }
+  button:hover {
+    background: #444;
+    color: white;
+  }
 
-    #mapImage {
-      max-width: 100vw;
-      max-height: 100vh;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      user-select: none;
-      display: block;
-      flex-grow: 1;
-    }
+  /* Mapa - overlay */
+  #mapOverlay {
+    display: none; /* ukryta na start */
+    position: fixed;
+    top:0; left:0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.95);
+    z-index: 1000;
 
-    #closeButton {
-      align-self: flex-start;
-      margin: 10px 0 10px 10px;
-      padding: 10px 20px;
-      font-size: 1rem;
-      background: white;
-      color: black;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      z-index: 1100;
-    }
-    #closeButton:hover {
-      background: crimson;
-      color: white;
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    flex-direction: column;
+  }
 
-    /* Napis "created by sooga" */
-    #footerText {
-      position: fixed;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 0.9rem;
-      color: white;
-      z-index: 1100;
-      font-style: italic;
-      user-select: none;
-    }
-  </style>
+  #mapImage {
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    user-select: none;
+    display: block;
+    flex-grow: 1;
+  }
+
+  #closeButton {
+    align-self: flex-start;
+    margin: 10px 0 10px 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: white;
+    color: black;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 1100;
+  }
+  #closeButton:hover {
+    background: crimson;
+    color: white;
+  }
+
+  /* Napis "created by sooga" */
+  #footerText {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    color: white;
+    z-index: 1100;
+    font-style: italic;
+    user-select: none;
+  }
+</style>
 </head>
 <body>
 
@@ -143,7 +151,7 @@
   <div id="footerText">created by sooga</div>
 
   <script>
-    // ** NA POCZĄTKU wymusz ukrycie mapy - reset **
+    // Wymusz ukrycie mapy na start
     const mapOverlay = document.getElementById('mapOverlay');
     mapOverlay.style.display = 'none';
 
@@ -185,3 +193,4 @@
 
 </body>
 </html>
+
