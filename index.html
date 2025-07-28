@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FiveLife - Mapa fullscreen</title>
+  <title>FiveLife - Strona z mapą</title>
   <style>
     html, body {
       margin: 0; padding: 0; height: 100%;
@@ -66,8 +66,9 @@
       color: white;
     }
 
+    /* Mapa - overlay */
     #mapOverlay {
-      display: none; /* start hidden */
+      display: none; /* ukryta na start */
       position: fixed;
       top:0; left:0;
       width: 100vw;
@@ -79,6 +80,7 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      flex-direction: column;
     }
 
     #mapImage {
@@ -89,13 +91,12 @@
       object-fit: contain;
       user-select: none;
       display: block;
+      flex-grow: 1;
     }
 
     #closeButton {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1100;
+      align-self: flex-start;
+      margin: 10px 0 10px 10px;
       padding: 10px 20px;
       font-size: 1rem;
       background: white;
@@ -103,6 +104,7 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      z-index: 1100;
     }
     #closeButton:hover {
       background: crimson;
@@ -128,12 +130,12 @@
   <script>
     // Tworzenie gwiazdek
     const starsContainer = document.getElementById('stars');
-    const starCount = 100; // liczba gwiazd
+    const starCount = 100;
 
     for(let i=0; i<starCount; i++){
       const star = document.createElement('div');
       star.classList.add('star');
-      const size = Math.random() * 2 + 1; // rozmiar 1-3 px
+      const size = Math.random() * 2 + 1; // 1-3 px
       star.style.width = size + 'px';
       star.style.height = size + 'px';
       star.style.top = (Math.random() * 100) + 'vh';
@@ -143,7 +145,6 @@
       starsContainer.appendChild(star);
     }
 
-    // Map controls
     const openMapBtn = document.getElementById('openMapBtn');
     const mapOverlay = document.getElementById('mapOverlay');
     const closeButton = document.getElementById('closeButton');
@@ -156,7 +157,7 @@
       mapOverlay.style.display = 'none';
     });
 
-    // Zamknięcie ESC
+    // Zamknij ESC
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
         mapOverlay.style.display = 'none';
