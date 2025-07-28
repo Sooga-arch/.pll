@@ -2,29 +2,43 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FiveLife - Mapa</title>
   <style>
-    body {
+    html, body {
       margin: 0;
       padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
       background: black;
       color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      overflow: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
     }
 
     h1 {
       font-size: 4rem;
       margin-top: 100px;
       text-shadow: 0 0 15px white;
+      text-align: center;
     }
 
-    #openMapBtn {
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
       margin-top: 30px;
-      font-size: 1.5rem;
-      padding: 15px 30px;
+    }
+
+    button {
+      font-size: 1.2rem;
+      padding: 12px 25px;
       background: white;
       color: black;
       border: none;
@@ -33,32 +47,30 @@
       transition: 0.3s;
     }
 
-    #openMapBtn:hover {
+    button:hover {
       background: #444;
       color: white;
     }
 
-    #mapOverlay {
+    #mapOverlay, #legendOverlay {
       display: none;
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: black;
+      background: rgba(0, 0, 0, 0.95);
       z-index: 1000;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
     }
 
     #mapImage {
-      cursor: grab;
-      user-select: none;
-      max-width: none;
-      max-height: none;
       width: 100vw;
       height: 100vh;
       object-fit: contain;
+      user-select: none;
     }
 
     #closeButton {
@@ -79,73 +91,116 @@
       background: crimson;
       color: white;
     }
+
+    #legendList {
+      font-size: 1.5rem;
+      text-align: left;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 20px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>FiveLife</h1>
-  <button id="openMapBtn">MAPA</button>
+  <canvas id="stars"></canvas>
 
+  <h1>FiveLife</h1>
+
+  <div class="buttons">
+    <button id="openMapBtn">MAPA</button>
+    <button id="openLegendBtn">LEGENDA</button>
+  </div>
+
+  <!-- MAPA -->
   <div id="mapOverlay">
     <button id="closeButton">Zamknij obraz</button>
     <img id="mapImage" src="mapa.jpg" alt="Mapa" />
   </div>
 
-  <!-- Panzoom -->
-  <script src="https://unpkg.com/@panzoom/panzoom@9.4.0/dist/panzoom.min.js"></script>
+  <!-- LEGENDA -->
+  <div id="legendOverlay">
+    <button id="closeLegendBtn">Zamknij legendę</button>
+    <div id="legendList"></div>
+  </div>
+
   <script>
+    // 🟡 Animacja gwiazd
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for (let i = 0; i < 150; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5
+      });
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      for (let s of stars) {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, 2 * Math.PI);
+        ctx.fill();
+        s.x += s.dx;
+        s.y += s.dy;
+        if (s.x < 0 || s.x > canvas.width) s.dx *= -1;
+        if (s.y < 0 || s.y > canvas.height) s.dy *= -1;
+      }
+      requestAnimationFrame(drawStars);
+    }
+
+    drawStars();
+
+    // 🟢 MAPA
     const openMapBtn = document.getElementById('openMapBtn');
-    const closeButton = document.getElementById('closeButton');
     const mapOverlay = document.getElementById('mapOverlay');
-    const mapImage = document.getElementById('mapImage');
-
-    let panzoomInstance = null;
-    let cursorPosition = { x: 0, y: 0 };
-
-    mapOverlay.addEventListener('mousemove', (e) => {
-      cursorPosition = { x: e.clientX, y: e.clientY };
-    });
+    const closeButton = document.getElementById('closeButton');
 
     openMapBtn.addEventListener('click', () => {
       mapOverlay.style.display = 'flex';
-
-      if (!panzoomInstance) {
-        panzoomInstance = Panzoom(mapImage, {
-          maxScale: 5,
-          minScale: 0.5,
-          contain: 'outside'
-        });
-
-        mapOverlay.addEventListener('wheel', panzoomInstance.zoomWithWheel);
-
-        mapImage.addEventListener('pointerdown', () => {
-          mapImage.style.cursor = 'grabbing';
-        });
-
-        mapImage.addEventListener('pointerup', () => {
-          mapImage.style.cursor = 'grab';
-        });
-
-        mapImage.addEventListener('pointerleave', () => {
-          mapImage.style.cursor = 'grab';
-        });
-      }
     });
 
     closeButton.addEventListener('click', () => {
       mapOverlay.style.display = 'none';
     });
 
+    // 🔵 LEGENDA
+    const openLegendBtn = document.getElementById('openLegendBtn');
+    const legendOverlay = document.getElementById('legendOverlay');
+    const closeLegendBtn = document.getElementById('closeLegendBtn');
+    const legendList = document.getElementById('legendList');
+
+    openLegendBtn.addEventListener('click', () => {
+      legendList.innerHTML = "";
+      for (let i = 1; i <= 30; i++) {
+        legendList.innerHTML += `<div>Punkt ${i}</div>`;
+      }
+      legendOverlay.style.display = 'flex';
+    });
+
+    closeLegendBtn.addEventListener('click', () => {
+      legendOverlay.style.display = 'none';
+    });
+
+    // ESC zamyka oba
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         mapOverlay.style.display = 'none';
-      }
-
-      if (e.key.toLowerCase() === 'c' && mapOverlay.style.display === 'flex') {
-        const rect = mapImage.getBoundingClientRect();
-        const x = cursorPosition.x - rect.left;
-        const y = cursorPosition.y - rect.top;
-        panzoomInstance.zoomIn({ animate: true, focal: { x, y } });
+        legendOverlay.style.display = 'none';
       }
     });
   </script>
