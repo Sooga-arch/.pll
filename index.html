@@ -2,38 +2,29 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FiveLife - Mapa</title>
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
+      margin: 0; padding: 0; height: 100%;
       font-family: Arial, sans-serif;
       overflow: hidden;
       background: black;
       color: white;
-    }
-
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
+      text-align: center;
     }
 
     h1 {
       font-size: 4rem;
       margin-top: 100px;
       text-shadow: 0 0 15px white;
-      text-align: center;
     }
 
     .buttons {
+      margin-top: 30px;
       display: flex;
       justify-content: center;
       gap: 20px;
-      margin-top: 30px;
     }
 
     button {
@@ -55,28 +46,36 @@
     #mapOverlay, #legendOverlay {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.95);
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.95);
       z-index: 1000;
       justify-content: center;
       align-items: center;
       flex-direction: column;
     }
 
-    #mapImage {
+    #mapContainer {
       width: 100vw;
       height: 100vh;
-      object-fit: contain;
+      overflow: hidden;
+      touch-action: none; /* dla panzoom */
+      position: relative;
+    }
+
+    #mapImage {
       user-select: none;
+      max-width: none;
+      max-height: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      cursor: grab;
     }
 
     #closeButton {
       position: fixed;
-      top: 20px;
-      left: 20px;
+      top: 20px; left: 20px;
       z-index: 1100;
       padding: 10px 20px;
       font-size: 1rem;
@@ -98,12 +97,14 @@
       max-height: 80vh;
       overflow-y: auto;
       padding: 20px;
+      color: white;
+      background: black;
+      border-radius: 8px;
+      width: 300px;
     }
   </style>
 </head>
 <body>
-
-  <canvas id="stars"></canvas>
 
   <h1>FiveLife</h1>
 
@@ -115,7 +116,9 @@
   <!-- MAPA -->
   <div id="mapOverlay">
     <button id="closeButton">Zamknij obraz</button>
-    <img id="mapImage" src="mapa.jpg" alt="Mapa" />
+    <div id="mapContainer">
+      <img id="mapImage" src="mapa.jpg" alt="Mapa" />
+    </div>
   </div>
 
   <!-- LEGENDA -->
@@ -124,61 +127,50 @@
     <div id="legendList"></div>
   </div>
 
+  <!-- Panzoom z CDN -->
+  <script src="https://unpkg.com/@panzoom/panzoom@9.4.0/dist/panzoom.min.js"></script>
   <script>
-    // 🟡 Animacja gwiazd
-    const canvas = document.getElementById('stars');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    for (let i = 0; i < 150; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
-      });
-    }
-
-    function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "white";
-      for (let s of stars) {
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.radius, 0, 2 * Math.PI);
-        ctx.fill();
-        s.x += s.dx;
-        s.y += s.dy;
-        if (s.x < 0 || s.x > canvas.width) s.dx *= -1;
-        if (s.y < 0 || s.y > canvas.height) s.dy *= -1;
-      }
-      requestAnimationFrame(drawStars);
-    }
-
-    drawStars();
-
-    // 🟢 MAPA
     const openMapBtn = document.getElementById('openMapBtn');
     const mapOverlay = document.getElementById('mapOverlay');
     const closeButton = document.getElementById('closeButton');
+    const mapImage = document.getElementById('mapImage');
+    const mapContainer = document.getElementById('mapContainer');
+
+    let panzoomInstance = null;
 
     openMapBtn.addEventListener('click', () => {
       mapOverlay.style.display = 'flex';
+
+      if (!panzoomInstance) {
+        panzoomInstance = Panzoom(mapImage, {
+          maxScale: 5,
+          minScale: 1,
+          contain: 'outside'
+        });
+
+        mapContainer.addEventListener('wheel', panzoomInstance.zoomWithWheel);
+
+        mapImage.style.cursor = 'grab';
+
+        mapImage.addEventListener('pointerdown', () => {
+          mapImage.style.cursor = 'grabbing';
+        });
+
+        mapImage.addEventListener('pointerup', () => {
+          mapImage.style.cursor = 'grab';
+        });
+
+        mapImage.addEventListener('pointerleave', () => {
+          mapImage.style.cursor = 'grab';
+        });
+      }
     });
 
     closeButton.addEventListener('click', () => {
       mapOverlay.style.display = 'none';
     });
 
-    // 🔵 LEGENDA
+    // LEGENDA
     const openLegendBtn = document.getElementById('openLegendBtn');
     const legendOverlay = document.getElementById('legendOverlay');
     const closeLegendBtn = document.getElementById('closeLegendBtn');
@@ -186,7 +178,7 @@
 
     openLegendBtn.addEventListener('click', () => {
       legendList.innerHTML = "";
-      for (let i = 1; i <= 30; i++) {
+      for(let i = 1; i <= 30; i++) {
         legendList.innerHTML += `<div>Punkt ${i}</div>`;
       }
       legendOverlay.style.display = 'flex';
@@ -196,14 +188,17 @@
       legendOverlay.style.display = 'none';
     });
 
-    // ESC zamyka oba
+    // ESC zamyka mapę i legendę
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+      if(e.key === 'Escape') {
         mapOverlay.style.display = 'none';
         legendOverlay.style.display = 'none';
       }
     });
   </script>
+
+</body>
+</html>
 
 </body>
 </html>
