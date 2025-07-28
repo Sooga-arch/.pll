@@ -37,6 +37,32 @@
     100% {opacity: 1;}
   }
 
+  /* Powijające się napisy GTA na tle */
+  #gtaContainer {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .gtaText {
+    position: absolute;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    user-select: none;
+    opacity: 0;
+    animation: gtaFade 4s infinite;
+    white-space: nowrap;
+    text-shadow: 0 0 5px white;
+  }
+  @keyframes gtaFade {
+    0%, 100% {opacity: 0;}
+    50% {opacity: 1;}
+  }
+
   h1 {
     margin-top: 100px;
     font-size: 4rem;
@@ -51,8 +77,6 @@
     justify-content: center;
     position: relative;
     z-index: 10;
-    flex-direction: column;
-    align-items: center;
   }
   button {
     padding: 12px 30px;
@@ -67,23 +91,6 @@
   button:hover {
     background: #444;
     color: white;
-  }
-
-  /* Kontener liczb pod przyciskiem */
-  #numberList {
-    margin-top: 15px;
-    color: white;
-    font-size: 1.1rem;
-    user-select: none;
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-  }
-  #numberList span {
-    min-width: 25px;
   }
 
   /* Mapa - overlay */
@@ -149,11 +156,12 @@
 
   <div id="stars"></div>
 
+  <div id="gtaContainer"></div>
+
   <h1>FiveLife</h1>
 
   <div class="buttons">
     <button id="openMapBtn">MAPA</button>
-    <div id="numberList"></div>
   </div>
 
   <div id="mapOverlay">
@@ -185,14 +193,27 @@
       starsContainer.appendChild(star);
     }
 
-    // Wstawienie liczb 1-30 pod przyciskiem
-    const numberList = document.getElementById('numberList');
-    for(let i=1; i<=30; i++) {
+    // Tworzenie powijających się napisów GTA
+    const gtaContainer = document.getElementById('gtaContainer');
+    const gtaTexts = [];
+    const gtaCount = 15; // liczba napisów na raz
+
+    function createGtaText(index) {
       const span = document.createElement('span');
-      span.textContent = i + '-';
-      numberList.appendChild(span);
+      span.classList.add('gtaText');
+      span.style.top = Math.random() * 90 + 'vh';
+      span.style.left = Math.random() * 90 + 'vw';
+      span.style.animationDelay = (index * 1 + Math.random()*3) + 's';
+      span.textContent = 'GTA';
+      gtaContainer.appendChild(span);
+      return span;
     }
 
+    for(let i=0; i<gtaCount; i++){
+      gtaTexts.push(createGtaText(i));
+    }
+
+    // Przycisk MAPA
     const openMapBtn = document.getElementById('openMapBtn');
     const closeButton = document.getElementById('closeButton');
 
