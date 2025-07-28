@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FiveLife - Mapa z 15 kropkami</title>
+  <title>FiveLife - Mapa bez zoomu</title>
   <style>
     html, body {
       margin: 0; padding: 0; height: 100%;
       background: black;
-      overflow: hidden;
       font-family: Arial, sans-serif;
       color: white;
       text-align: center;
+      overflow: hidden;
     }
     h1 {
       margin-top: 100px;
@@ -49,32 +49,32 @@
       z-index: 1000;
 
       display: flex;
-      justify-content: center;
-      align-items: center;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     #mapContainer {
       position: relative;
-      width: 100vw;
-      height: 100vh;
+      max-width: 90vw;
+      max-height: 70vh;
       overflow: hidden;
-      touch-action: none;
+      border: 2px solid white;
+      background: black;
     }
 
     #mapImage {
       width: 100%;
-      height: 100%;
-      object-fit: contain;
-      user-select: none;
-      cursor: grab;
+      height: auto;
       display: block;
+      user-select: none;
     }
 
     #closeButton {
-      position: fixed;
-      top: 20px; left: 20px;
-      z-index: 1100;
+      align-self: flex-start;
+      margin-bottom: 15px;
       padding: 10px 20px;
       font-size: 1rem;
       background: white;
@@ -88,39 +88,26 @@
       color: white;
     }
 
-    /* Kropki na mapie */
-    .map-dot {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      background: red;
-      border-radius: 50%;
-      border: 2px solid white;
-      cursor: pointer;
-      transform: translate(-50%, -50%);
-      z-index: 1200;
-    }
-
-    /* Tooltip */
-    .tooltip {
-      position: absolute;
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.8);
-      padding: 3px 7px;
-      border-radius: 4px;
-      font-size: 14px;
-      pointer-events: none;
+    #legend {
+      margin-top: 20px;
+      max-width: 90vw;
       color: white;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      white-space: nowrap;
-      z-index: 1300;
+      text-align: left;
+      font-size: 1rem;
+      overflow-y: auto;
+      max-height: 150px;
+      border: 1px solid white;
+      padding: 10px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.05);
     }
 
-    .map-dot:hover .tooltip {
-      opacity: 1;
+    #legend ul {
+      padding-left: 20px;
+      margin: 0;
+      columns: 3;
+      column-gap: 40px;
+      list-style-type: decimal;
     }
   </style>
 </head>
@@ -136,62 +123,24 @@
     <button id="closeButton">Zamknij obraz</button>
     <div id="mapContainer">
       <img id="mapImage" src="mapa.jpg" alt="Mapa" />
-
-      <!-- 15 kropek z tooltipami -->
-      <div class="map-dot" style="top: 10%; left: 15%;"><span class="tooltip">1</span></div>
-      <div class="map-dot" style="top: 20%; left: 30%;"><span class="tooltip">2</span></div>
-      <div class="map-dot" style="top: 30%; left: 45%;"><span class="tooltip">3</span></div>
-      <div class="map-dot" style="top: 40%; left: 60%;"><span class="tooltip">4</span></div>
-      <div class="map-dot" style="top: 50%; left: 75%;"><span class="tooltip">5</span></div>
-      <div class="map-dot" style="top: 60%; left: 20%;"><span class="tooltip">6</span></div>
-      <div class="map-dot" style="top: 65%; left: 35%;"><span class="tooltip">7</span></div>
-      <div class="map-dot" style="top: 70%; left: 50%;"><span class="tooltip">8</span></div>
-      <div class="map-dot" style="top: 75%; left: 65%;"><span class="tooltip">9</span></div>
-      <div class="map-dot" style="top: 80%; left: 80%;"><span class="tooltip">10</span></div>
-      <div class="map-dot" style="top: 85%; left: 25%;"><span class="tooltip">11</span></div>
-      <div class="map-dot" style="top: 87%; left: 40%;"><span class="tooltip">12</span></div>
-      <div class="map-dot" style="top: 89%; left: 55%;"><span class="tooltip">13</span></div>
-      <div class="map-dot" style="top: 91%; left: 70%;"><span class="tooltip">14</span></div>
-      <div class="map-dot" style="top: 93%; left: 85%;"><span class="tooltip">15</span></div>
+    </div>
+    <div id="legend">
+      <strong>LEGENDA</strong>
+      <ul>
+        <li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li>
+        <li>11</li><li>12</li><li>13</li><li>14</li><li>15</li><li>16</li><li>17</li><li>18</li><li>19</li><li>20</li>
+        <li>21</li><li>22</li><li>23</li><li>24</li><li>25</li><li>26</li><li>27</li><li>28</li><li>29</li><li>30</li>
+      </ul>
     </div>
   </div>
 
-  <script src="https://unpkg.com/@panzoom/panzoom@9.4.0/dist/panzoom.min.js"></script>
   <script>
     const openMapBtn = document.getElementById('openMapBtn');
     const mapOverlay = document.getElementById('mapOverlay');
     const closeButton = document.getElementById('closeButton');
-    const mapImage = document.getElementById('mapImage');
-    const mapContainer = document.getElementById('mapContainer');
-
-    let panzoomInstance = null;
 
     openMapBtn.addEventListener('click', () => {
       mapOverlay.style.display = 'flex';
-
-      if (!panzoomInstance) {
-        panzoomInstance = Panzoom(mapImage, {
-          maxScale: 5,
-          minScale: 1,
-          contain: 'outside'
-        });
-
-        mapContainer.addEventListener('wheel', panzoomInstance.zoomWithWheel);
-
-        mapImage.style.cursor = 'grab';
-
-        mapImage.addEventListener('pointerdown', () => {
-          mapImage.style.cursor = 'grabbing';
-        });
-
-        mapImage.addEventListener('pointerup', () => {
-          mapImage.style.cursor = 'grab';
-        });
-
-        mapImage.addEventListener('pointerleave', () => {
-          mapImage.style.cursor = 'grab';
-        });
-      }
     });
 
     closeButton.addEventListener('click', () => {
