@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FiveLife - Mapa bez zoomu</title>
+  <title>FiveLife - Mapa i Legenda</title>
   <style>
     html, body {
       margin: 0; padding: 0; height: 100%;
@@ -22,10 +22,10 @@
       margin: 30px 0;
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 30px;
     }
     button {
-      padding: 12px 25px;
+      padding: 12px 30px;
       font-size: 1.2rem;
       border: none;
       border-radius: 8px;
@@ -39,7 +39,7 @@
       color: white;
     }
 
-    #mapOverlay {
+    .overlay {
       display: none;
       position: fixed;
       top:0; left:0;
@@ -57,22 +57,21 @@
     }
 
     #mapContainer {
-      position: relative;
       max-width: 90vw;
-      max-height: 70vh;
-      overflow: hidden;
+      max-height: 80vh;
       border: 2px solid white;
       background: black;
+      overflow: hidden;
     }
 
     #mapImage {
       width: 100%;
       height: auto;
-      display: block;
       user-select: none;
+      display: block;
     }
 
-    #closeButton {
+    #closeMapBtn, #closeLegendBtn {
       align-self: flex-start;
       margin-bottom: 15px;
       padding: 10px 20px;
@@ -83,26 +82,25 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    #closeButton:hover {
+    #closeMapBtn:hover, #closeLegendBtn:hover {
       background: crimson;
       color: white;
     }
 
-    #legend {
-      margin-top: 20px;
+    #legendContent {
       max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
       color: white;
       text-align: left;
-      font-size: 1rem;
-      overflow-y: auto;
-      max-height: 150px;
+      font-size: 1.2rem;
       border: 1px solid white;
-      padding: 10px;
-      border-radius: 6px;
+      padding: 20px;
+      border-radius: 8px;
       background: rgba(255,255,255,0.05);
     }
 
-    #legend ul {
+    #legendContent ul {
       padding-left: 20px;
       margin: 0;
       columns: 3;
@@ -117,14 +115,21 @@
 
   <div class="buttons">
     <button id="openMapBtn">MAPA</button>
+    <button id="openLegendBtn">LEGENDA</button>
   </div>
 
-  <div id="mapOverlay">
-    <button id="closeButton">Zamknij obraz</button>
+  <!-- Mapa overlay -->
+  <div id="mapOverlay" class="overlay">
+    <button id="closeMapBtn">Zamknij obraz</button>
     <div id="mapContainer">
       <img id="mapImage" src="mapa.jpg" alt="Mapa" />
     </div>
-    <div id="legend">
+  </div>
+
+  <!-- Legenda overlay -->
+  <div id="legendOverlay" class="overlay">
+    <button id="closeLegendBtn">Zamknij legendę</button>
+    <div id="legendContent">
       <strong>LEGENDA</strong>
       <ul>
         <li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li>
@@ -136,20 +141,37 @@
 
   <script>
     const openMapBtn = document.getElementById('openMapBtn');
+    const openLegendBtn = document.getElementById('openLegendBtn');
+
     const mapOverlay = document.getElementById('mapOverlay');
-    const closeButton = document.getElementById('closeButton');
+    const legendOverlay = document.getElementById('legendOverlay');
+
+    const closeMapBtn = document.getElementById('closeMapBtn');
+    const closeLegendBtn = document.getElementById('closeLegendBtn');
 
     openMapBtn.addEventListener('click', () => {
       mapOverlay.style.display = 'flex';
+      legendOverlay.style.display = 'none';
     });
 
-    closeButton.addEventListener('click', () => {
+    openLegendBtn.addEventListener('click', () => {
+      legendOverlay.style.display = 'flex';
       mapOverlay.style.display = 'none';
     });
 
+    closeMapBtn.addEventListener('click', () => {
+      mapOverlay.style.display = 'none';
+    });
+
+    closeLegendBtn.addEventListener('click', () => {
+      legendOverlay.style.display = 'none';
+    });
+
+    // Zamknięcie ESC na obydwa overlaye
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
         mapOverlay.style.display = 'none';
+        legendOverlay.style.display = 'none';
       }
     });
   </script>
