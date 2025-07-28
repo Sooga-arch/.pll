@@ -110,6 +110,19 @@
       background: crimson;
       color: white;
     }
+
+    /* Napis "created by sooga" */
+    #footerText {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+      color: white;
+      z-index: 1100;
+      font-style: italic;
+      user-select: none;
+    }
   </style>
 </head>
 <body>
@@ -126,6 +139,8 @@
     <button id="closeButton">Zamknij obraz</button>
     <img id="mapImage" src="mapa.jpg" alt="Mapa" />
   </div>
+
+  <div id="footerText">created by sooga</div>
 
   <script>
     // Tworzenie gwiazdek
