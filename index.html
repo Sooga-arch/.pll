@@ -2,182 +2,49 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FiveLife - Strona z mapą</title>
+  <title>FiveLife</title>
   <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%;
-      background: black;
-      font-family: Arial, sans-serif;
-      color: white;
-      text-align: center;
-      overflow: hidden;
-      position: relative;
+    body {
+      margin: 0; padding: 0; background: black; color: white; font-family: Arial, sans-serif; text-align: center;
     }
-
-    /* Gwiazdy */
-    #stars {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-      background: transparent;
-    }
-    .star {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      opacity: 0.8;
-      animation: twinkle 3s infinite alternate;
-    }
-    @keyframes twinkle {
-      0% {opacity: 0.3;}
-      100% {opacity: 1;}
-    }
-
-    h1 {
-      margin-top: 100px;
-      font-size: 4rem;
-      text-shadow: 0 0 15px white;
-      position: relative;
-      z-index: 10;
-    }
-    .buttons {
-      margin: 30px 0;
-      display: flex;
-      justify-content: center;
-      position: relative;
-      z-index: 10;
-    }
-    button {
-      padding: 12px 30px;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: white;
-      color: black;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #444;
-      color: white;
-    }
-
-    /* Mapa - overlay */
     #mapOverlay {
-      display: none; /* ukryta na start */
-      position: fixed;
-      top:0; left:0;
-      width: 100vw;
-      height: 100vh;
+      display: none; /* MAPA ukryta na start */
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(0,0,0,0.95);
+      justify-content: center; align-items: center; flex-direction: column;
       z-index: 1000;
-
       display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      flex-direction: column;
     }
-
     #mapImage {
-      max-width: 100vw;
-      max-height: 100vh;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      user-select: none;
-      display: block;
-      flex-grow: 1;
+      max-width: 100vw; max-height: 100vh; object-fit: contain;
     }
-
     #closeButton {
-      align-self: flex-start;
-      margin: 10px 0 10px 10px;
-      padding: 10px 20px;
-      font-size: 1rem;
-      background: white;
-      color: black;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      z-index: 1100;
-    }
-    #closeButton:hover {
-      background: crimson;
-      color: white;
-    }
-
-    /* Napis "created by sooga" */
-    #footerText {
-      position: fixed;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 0.9rem;
-      color: white;
-      z-index: 1100;
-      font-style: italic;
-      user-select: none;
+      position: absolute; top: 10px; left: 10px;
+      padding: 10px 20px; background: white; border: none; cursor: pointer; border-radius: 6px; color: black;
     }
   </style>
 </head>
 <body>
 
-  <div id="stars"></div>
-
   <h1>FiveLife</h1>
-
-  <div class="buttons">
-    <button id="openMapBtn">MAPA</button>
-  </div>
+  <button id="openMapBtn">MAPA</button>
 
   <div id="mapOverlay">
     <button id="closeButton">Zamknij obraz</button>
     <img id="mapImage" src="mapa.jpg" alt="Mapa" />
   </div>
 
-  <div id="footerText">created by sooga</div>
-
   <script>
-    // Tworzenie gwiazdek
-    const starsContainer = document.getElementById('stars');
-    const starCount = 100;
-
-    for(let i=0; i<starCount; i++){
-      const star = document.createElement('div');
-      star.classList.add('star');
-      const size = Math.random() * 2 + 1; // 1-3 px
-      star.style.width = size + 'px';
-      star.style.height = size + 'px';
-      star.style.top = (Math.random() * 100) + 'vh';
-      star.style.left = (Math.random() * 100) + 'vw';
-      star.style.animationDuration = (Math.random() * 3 + 2) + 's';
-      star.style.opacity = Math.random() * 0.8 + 0.2;
-      starsContainer.appendChild(star);
-    }
-
     const openMapBtn = document.getElementById('openMapBtn');
     const mapOverlay = document.getElementById('mapOverlay');
     const closeButton = document.getElementById('closeButton');
 
-    openMapBtn.addEventListener('click', () => {
+    openMapBtn.onclick = () => {
       mapOverlay.style.display = 'flex';
-    });
-
-    closeButton.addEventListener('click', () => {
+    }
+    closeButton.onclick = () => {
       mapOverlay.style.display = 'none';
-    });
-
-    // Zamknij ESC
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        mapOverlay.style.display = 'none';
-      }
-    });
+    }
   </script>
 
 </body>
